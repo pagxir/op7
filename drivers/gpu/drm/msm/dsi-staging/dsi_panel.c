@@ -5240,6 +5240,7 @@ int dsi_panel_set_aod_mode(struct dsi_panel *panel, int level)
 			if(aod_real_flag == false) {
 				pr_err("Send DSI_CMD_SET_AOD_OFF_NEW cmds\n");
 				rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_AOD_OFF_NEW);
+				rc= dsi_panel_update_backlight(panel,panel->bl_config.bl_level);
 				if (level == 0) {
 					tp_aod_flag = 200;
 					notifier_data.data = &tp_aod_flag;
