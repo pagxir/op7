@@ -35,10 +35,10 @@ restore='\033[0m'
 	dc=SD_defconfig
 
 # Source Path to kernel tree
-	k=/home/holyangel/android/Kernels/sm8150
+	k=/home/holyangel/android/Kernels/sm8150x
 
 # Compile Path to out 
-	o="O=/home/holyangel/android/Kernels/sm8150/out"
+	o="O=/home/holyangel/android/Kernels/sm8150x/out"
 
 # CPU threads
 	th="-j$(grep -c ^processor /proc/cpuinfo)"

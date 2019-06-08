@@ -33,7 +33,7 @@ restore='\033[0m'
 	CC_DIR=/home/holyangel/android/Toolchains/Snapdragon_LLVM_v8.0.6/bin/
 
 # Compile Path to out 
-	o="O=/home/holyangel/android/Kernels/sm8150/out"
+	o="O=/home/holyangel/android/Kernels/sm8150x/out"
 
 # CPU threads
 	th="-j4"
