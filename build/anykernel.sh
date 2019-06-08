@@ -10,10 +10,10 @@ do.devicecheck=1
 do.modules=0
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=OnePlus7Pro
-device.name2=guacamole
-device.name3=OnePlus 7 Pro
-device.name4=Guacamole
+device.name1=OnePlus7ProNR
+device.name2=guacamolec
+device.name3=
+device.name4=
 device.name5=
 supported.versions=
 '; } # end properties
