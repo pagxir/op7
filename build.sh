@@ -123,7 +123,9 @@ function make_kernel {
 		echo -e "${green}Created new out directory"
 		echo -e "${yellow}Establishing build environment..${restore}"
 		make "$o" CC=clang $dc
-		echo -e "${yellow}Starting Compile..${restore}"
+		echo -e "${yellow}~~~~~~~~~~~~~~~~~~"
+		echo -e "${yellow}Starting Compile.."
+		echo -e "${yellow}~~~~~~~~~~~~~~~~~~${restore}"
 		time make "$o" CC=clang $th
 		echo -e "${green}Compilation Successful!${restore}"
 }
@@ -143,16 +145,16 @@ function make_zip {
 		echo
 		make_bclean
 		make_kernel
-		echo -e "${yellow}Copying kernel to zip directory"
+		echo -e "${yellow}Copying kernel to zip directory..${red}"
 		cp "$io" "$zi"
 		echo -e "${green}Copy Successful${restore}"
 		make_clog
-		echo -e "${yellow}Making zip file.."
+		echo -e "${yellow}Making zip file....${red}"
 		cd "$zp"
 		zip -r "$kn" *
 		echo -e "${yellow}Moving zip to upload directory"
 		mv "$kn" "$zu" 
-		echo -e "${yellow}Back to Start.."
+		echo -e "${yellow}Back to Start....${red}"
 		cd $k
 		echo -e "${green}Completed build script!${restore}"
 		pause
