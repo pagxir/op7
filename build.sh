@@ -111,7 +111,7 @@ function make_bclean {
 		rm -rf $zi
 		rm -rf $zj
 		rm -rf $zc
-		echo -e "${green}Completed!"
+		echo -e "${green}Completed!${restore}"
 }
 
 # Function to clean generated out folder
@@ -119,7 +119,7 @@ function make_oclean {
 		echo
 		echo -e "${yellow}Cleaning up out directory${red}"
 		rm -rf "$co"
-		echo -e "${green}Out directory removed!"
+		echo -e "${green}Out directory removed!${restore}"
 }
 
 # Funtion to clean source tree
@@ -127,7 +127,7 @@ function make_sclean {
 		echo
 		echo -e "${yellow}Cleaning source directory..${red}"
 		make clean && make mrproper
-		echo -e "${green}Cleaning Completed!"
+		echo -e "${green}Cleaning Completed!${restore}"
 }
 
 # Function to clean up pregenerated images
@@ -187,7 +187,7 @@ function make_zip {
 		mv "$kn" "$zu" 
 		echo -e "${green}Completed build script!${restore}"
 		cd $k
-		echo -e "${yellow}Back at Start${red}"
+		echo -e "${restore}Back at Start"
 		pause
 }
 
