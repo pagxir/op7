@@ -7,7 +7,8 @@ blink_red='\033[05;31m'
 restore='\033[0m'
 reset='\e[0m'
 
-#SkyDragon Kernel Build Script
+# SkyDragon Kernel Build Script
+# Version 2.0
 ##############################################
 
 # Kernel zip Name
@@ -30,8 +31,8 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
 export CROSS_COMPILE=/android/toolchains/aarch64-9.1/bin/aarch64-linux-gnu-
 # Location Arm32 GCC Toolchain *
-export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
-# Export Clang Libary To LD Library Path
+# export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
+# Location of Clang Libary to LD Library Path
 export LD_LIBRARY_PATH=/android/toolchains/gclang/lib64:$LD_LIBRARY_PATH
 
 ##############################################
@@ -70,6 +71,13 @@ zi=$k/build/$img_gz
 ### Destination path for compiled Image.lz4-dtb
 # zi=$k/build/$img_lz4
 ##############################################
+## Uncompressed Image (Uncomment to Enable) ##
+# img_uc=Image-dtb
+### Source Path to compiled Image-dtb
+# io=$k/out/arch/arm64/boot/$img_uc
+### Destination path for compiled Image-dtb
+# zi=$k/build/$img_uc
+##############################################
 
 # DTBToolCM
 dtbtool=$k/build/tools/dtbToolCM
@@ -106,11 +114,21 @@ zu=$k/upload/
 ##############################################
 # Functions
 ##############################################
+
+######################
 # Function to Pause
 function pause() {
 	local message="$@"
 	[ -z $message ] && message="Press [Enter] key to continue.."
 	read -p "$message" readEnterkey
+}
+######################
+# Function to goto menu
+function pmenu() {
+	local message="$@"
+	[ -z $message ] && message="Press [Enter] key to return to the main menu.."
+	read -p "$message" readEnterkey
+	show_menus
 }
 ######################
 # Function to clean up pregenerated images
@@ -147,10 +165,10 @@ function make_fclean {
 		make_bclean
 		make_oclean
 		make_sclean
-		pause
+		echo -e "${green}Environment Cleaning Successful!${restore}"
 }
 ######################
-# Function to only compile the kernel
+# Function to only compile the kernel, test builds
 function make_kernel {
 		echo
 		make_bclean
@@ -164,8 +182,13 @@ function make_kernel {
 		echo -e "${yellow}Starting Compile.."
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~${restore}"
 		time make "$o" $ccs $th |& tee -a "$zbl"
-		echo -e "${green}Compilation Successful!${restore}"
-		pause
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Compilation Successful!${restore}"
+			pause
+		else
+			echo -e "${red}Compilation Failed!${restore}"
+			pause
+		fi
 }
 ######################
 # Function to recompile the kernel at a slower rate
@@ -174,29 +197,94 @@ function recompile_kernel {
 		echo
 		echo -e "${yellow}Picking up where you left off..${restore}"
 		time make "$o" $ccs $thrc |& tee -a "$zbl"
-		echo -e "${green}Compilation Successful!${restore}"
-		pause
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Compilation Successful!${restore}"
+			pause
+		else
+			echo -e "${red}Compilation Failed!${restore}"
+			pause
+		fi
+}
+######################
+# Function for full kernel compile
+function make_fkernel {
+		echo -e "${yellow}Making new out directory${restore}"
+		mkdir -p "$co"
+		echo -e "${green}Created new out directory${restore}"
+		echo -e "${yellow}Establishing build environment..${restore}"
+		make "$o" $ccs $dc
+		echo -e "${yellow}Starting Compile..${restore}"
+		make "$o" $ccs $th |& tee -a "$zbl"
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Compilation Successful!${restore}"
+		else
+			echo -e "${red}Compilation Failed!${restore}"
+			pause
+		fi
 }
 ######################
 # Function to generate the kernel zip
 function make_zip {
 		echo
 		echo -e "${yellow}Copying kernel to zip directory..${red}"
-		cp "$io" "$zi" |& tee -a "$zbl"
-		# Uncomment to enable dtbo
+		if [ -f "$io" ]; then
+			cp "$io" "$zi" |& tee -a "$zbl"
+			if [ $? -eq 0 ]; then
+			echo -e "${green}Copy Successful${restore}"
+			else
+			echo -e "${red}Copy Failed!${restore}"
+			pmenu
+			exit
+			fi
+		else
+			echo -e "${yellow}No kernel to copy, trying prebuilt in build folder..${red}"
+			if [ -f "$zi" ]; then
+			echo -e "${green}Prebuilt exists! Continuing with build folder kernel..${restore}"
+			else
+			echo -e "${red}No Prebuilt kernel either! COMPILE FIRST!${restore}"
+			pmenu
+			exit
+			fi
+		fi
+# Uncomment to enable making dtb
+#		make_dtb
+# Uncomment to enable copying dtbo
 #		echo -e "${yellow}Copying dtbo to zip directory..${red}"
 #		cp "$j" "$zj"
-		# Uncomment to enable dtb
-#		echo
-#		make_dtb
-		echo -e "${green}Copy Successful${restore}"
 		make_clog
-		echo
 		echo -e "${yellow}Making zip file....${red}"
 		cd "$zp"
 		zip -r "$kn" *
-		echo -e "${yellow}Moving zip to upload directory"
-		mv "$kn" "$zu" 
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Zip Creation Successful${restore}"
+		else
+			echo -e "${red}Zip Creation Failed!${restore}"
+			pmenu
+			exit
+		fi
+		if [ -d "$zu" ]; then
+			echo -e "${yellow}Moving zip to upload directory"
+			mv "$kn" "$zu"
+			if [ $? -eq 0 ]; then
+				echo -e "${green}Zip Moved to Upload Folder Successfully${restore}"
+			else
+				echo -e "${red}Zip Moving Failed!${restore}"
+				pmenu
+				exit
+			fi
+		else
+			echo -e "${yellow}Creating upload directory"
+			mkdir -p "$zu"
+			echo -e "${yellow}Moving zip to upload directory"
+			mv "$kn" "$zu" 
+			if [ $? -eq 0 ]; then
+				echo -e "${green}Zip Moved to Upload Folder Successfully${restore}"
+			else
+				echo -e "${red}Zip Moving Failed!${restore}"
+				pmenu
+				exit
+			fi
+		fi
 		echo -e "${green}Completed build script!${restore}"
 		cd $k
 		echo -e "${restore}Back at Start"
@@ -205,10 +293,13 @@ function make_zip {
 ######################
 # Function to generate a dtb image
 function make_dtb {
-		echo
+	if [ -f "$dtbtool" ]; then
 		echo -e "${yellow}Generating DTB Image"
 		$dtbtool -2 -o $zd -s 2048 -p $co/scripts/dtc/ $co/arch/arm64/boot/dts/qcom/
 		echo -e "${green}DTB Generated!${restore}"
+	else
+		echo -e "${yellow}No DTB Tool Available!${restore}"
+	fi
 }
 ######################
 # Generate Changelog
@@ -236,9 +327,8 @@ function make_clog {
 # Function to build the full kernel zip
 function make_full {
 		echo
-		make_bclean
-		make_sclean
-		make_kernel
+		make_fclean
+		make_fkernel
 		make_zip
 }
 
@@ -254,8 +344,8 @@ function make_full {
 		echo "	1. Compile Kernel"
 		echo "	2. Recompile Kernel"
 		echo "	3. Generate Kernel Zip"
-		echo "	4. Generate Changelog"
-		echo "	5. Make Full Build"
+		echo "	4. Make Full Build"
+		echo "	5. Generate Stand-Alone Changelog"
  		echo "	6. Clean Environment"
   		echo "	7. Exit"
 }
@@ -268,8 +358,8 @@ read_options(){
 		1) make_kernel ;;
 		2) recompile_kernel ;;
 		3) make_zip ;;
-		4) make_clog ;;
-		5) make_full ;;
+		4) make_full ;;
+		5) make_clog ;;
 		6) make_fclean ;;
 		7) exit 0;;
 		*) echo -e "${red}Error...${restore}" && sleep 1
