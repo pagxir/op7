@@ -28,7 +28,7 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
 export CROSS_COMPILE=/android/toolchains/aarch64-9.1/bin/aarch64-linux-gnu-
 # Location Arm32 GCC Toolchain *
-export CROSS_COMPILE_ARM32=/android/toolchains/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
+export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
 # Export Clang Libary To LD Library Path
 export LD_LIBRARY_PATH=/android/toolchains/gclang/lib64:$LD_LIBRARY_PATH
 
@@ -41,24 +41,40 @@ KERNEL_DIR=`pwd`
 k="/android/kernels/sm8150qs"
 
 # CPU threads
+# All Available cores (Used for normal compilation)
 th="-j$(grep -c ^processor /proc/cpuinfo)"
+# 12 Cores Only: Recompile (Only used for 'recompiles' to catch errors more easily)
 thrc="-j12"
 
-# Source defconfig used to build
+# Path to source defconfig used to build
 dc=SD_defconfig
 
-# Image Name
+# Image Type (Only ONE of the following (lz4/gz) can Enabled!)
+# GZ Image (Uncomment to Enable)
 img_gz=Image.gz-dtb
-img_lz4=Image.lz4-dtb
 # Source Path to compiled Image.gz-dtb
 io=$k/out/arch/arm64/boot/$img_gz
 # Destination path for compiled Image.gz-dtb
 zi=$k/build/$img_gz
 
+### lz4 image (Uncomment to Enable)
+# img_lz4=Image.lz4-dtb
+## Source Path to compiled Image.lz4-dtb
+# io=$k/out/arch/arm64/boot/$img_lz4
+## Destination path for compiled Image.lz4-dtb
+# zi=$k/build/$img_lz4
+
 # DTBToolCM
 dtbtool=$k/build/tools/dtbToolCM
 # Destination path for compiled dtb image
 zd=$k/build/dtb
+
+# DTBO Image
+dtbo=dtbo.img
+# Source Path to compiled dtbo image
+j=$k/out/arch/arm64/boot/$dtbo
+# Destination path for compiled dtbo image
+zj=$k/build/$dtbo
 
 # Compile Path to out 
 o="O=$k/out"
@@ -78,21 +94,6 @@ zm=$k/build/system/lib/modules
 zu=$k/upload/
 
 
-# Main Menu
-##############################################
-# Function to display menu
- show_menus() {
-		clear
-		echo "	~~~~~~~~~~~~~~~~~~"
-		echo "	M A I N - M E N U"
-		echo "	~~~~~~~~~~~~~~~~~~"
-		echo "	1. Make Kernel"
-		echo "	2. Recompile Kernel"
-		echo "	3. Make Full Zip"
-		echo "	4. Make Changelog"
-		echo "	5. Exit"
-}
-
 # Functions
 ##############################################
 # Function to Pause
@@ -106,18 +107,42 @@ function pause() {
 function make_bclean {
 		echo
 		echo -e "${yellow}Cleaning up pregenerated images${red}"
-		rm -rf $zi
 		rm -rf $zd
+		rm -rf $zi
+		rm -rf $zj
 		rm -rf $zc
 		echo -e "${green}Completed!"
+}
+
+# Function to clean generated out folder
+function make_oclean {
+		echo
+		echo -e "${yellow}Cleaning up out directory${red}"
+		rm -rf "$co"
+		echo -e "${green}Out directory removed!"
+}
+
+# Funtion to clean source tree
+function make_sclean {
+		echo
+		echo -e "${yellow}Cleaning source directory..${red}"
+		make clean && make mrproper
+		echo -e "${green}Cleaning Completed!"
+}
+
+# Function to clean up pregenerated images
+function make_fclean {
+		echo
+		make_bclean
+		make_oclean
+		make_sclean
+		pause
 }
 
 # Function to only compile the kernel
 function make_kernel {
 		echo
-		echo -e "${yellow}Cleaning up out directory${red}"
-		rm -rf "$co"
-		echo -e "${green}Out directory removed!"
+		make_oclean
 		echo -e "${yellow}Making new out directory"
 		mkdir -p "$co"
 		echo -e "${green}Created new out directory"
@@ -128,6 +153,7 @@ function make_kernel {
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~${restore}"
 		time make "$o" CC=clang $th
 		echo -e "${green}Compilation Successful!${restore}"
+		pause
 }
 
 # Function to recompile the kernel at a slower rate
@@ -135,28 +161,33 @@ function make_kernel {
 function recompile_kernel {
 		echo
 		echo -e "${yellow}Picking up where you left off..${restore}"
-		make "$o" CC=clang $thrc
+		time make "$o" CC=clang $thrc
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
 
-# Function to build the full kernel zip
+# Function to generate the kernel zip
 function make_zip {
 		echo
-		make_bclean
-		make_kernel
 		echo -e "${yellow}Copying kernel to zip directory..${red}"
 		cp "$io" "$zi"
+		# Uncomment to enable dtbo
+#		echo -e "${yellow}Copying dtbo to zip directory..${red}"
+#		cp "$j" "$zj"
+		# Uncomment to enable dtb
+#		echo
+#		make_dtb
 		echo -e "${green}Copy Successful${restore}"
 		make_clog
+		echo
 		echo -e "${yellow}Making zip file....${red}"
 		cd "$zp"
 		zip -r "$kn" *
 		echo -e "${yellow}Moving zip to upload directory"
 		mv "$kn" "$zu" 
-		echo -e "${yellow}Back to Start....${red}"
-		cd $k
 		echo -e "${green}Completed build script!${restore}"
+		cd $k
+		echo -e "${yellow}Back at Start${red}"
 		pause
 }
 
@@ -190,16 +221,43 @@ function make_clog {
 		echo -e "${yellow}Changelog Complete!${restore}"
 }
 
+# Function to build the full kernel zip
+function make_full {
+		echo
+		make_bclean
+		make_sclean
+		make_kernel
+		make_zip
+}
+
+# Main Menu
+##############################################
+# Function to display menu
+ show_menus() {
+		clear
+		echo "	~~~~~~~~~~~~~~~~~~"
+		echo "	M A I N - M E N U"
+		echo "	~~~~~~~~~~~~~~~~~~"
+		echo "	1. Compile Kernel"
+		echo "	2. Recompile Kernel"
+		echo "	3. Generate Kernel Zip"
+		echo "	4. Generate Changelog"
+		echo "	5. Make Full Build"
+ 		echo "	6. Clean Environment"
+  		echo "	7. Exit"
+}
 # Function to read menu choices
 read_options(){
 	local choice
-	read -p "Enter choice [1-5] " choice
+	read -p "Enter choice [1-7] " choice
 	case $choice in
 		1) make_kernel ;;
 		2) recompile_kernel ;;
 		3) make_zip ;;
 		4) make_clog ;;
-		5) exit 0;;
+		5) make_full ;;
+		6) make_fclean ;;
+		7) exit 0;;
 		*) echo -e "${red}Error...${restore}" && sleep 2
 	esac
 }
