@@ -42,6 +42,9 @@ KERNEL_DIR=`pwd`
 # Source Path to kernel tree
 k="/android/kernels/sm8150qs"
 
+#Compiler Type
+ccs="CC=clang"
+
 # CPU threads
 # All Available cores (Used for normal compilation)
 th="-j$(grep -c ^processor /proc/cpuinfo)"
@@ -149,11 +152,11 @@ function make_kernel {
 		mkdir -p "$co"
 		echo -e "${green}Created new out directory"
 		echo -e "${yellow}Establishing build environment..${restore}"
-		make "$o" CC=clang $dc
+		make "$o" $ccs $dc
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~"
 		echo -e "${yellow}Starting Compile.."
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~${restore}"
-		time make "$o" CC=clang $th
+		time make "$o" $ccs $th
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
@@ -163,7 +166,7 @@ function make_kernel {
 function recompile_kernel {
 		echo
 		echo -e "${yellow}Picking up where you left off..${restore}"
-		time make "$o" CC=clang $thrc
+		time make "$o" $ccs $thrc
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
