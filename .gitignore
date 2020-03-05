@@ -138,3 +138,5 @@ build/Image-dtb
 upload/
 
 build/Image\.lz4-dtb
+
+build.log
