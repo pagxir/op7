@@ -34,7 +34,7 @@ export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bi
 # Export Clang Libary To LD Library Path
 export LD_LIBRARY_PATH=/android/toolchains/gclang/lib64:$LD_LIBRARY_PATH
 
-
+##############################################
 # Paths
 ##############################################
 # Map current directory
@@ -55,19 +55,21 @@ thrc="-j12"
 dc=SD_defconfig
 
 # Image Type (Only ONE of the following (lz4/gz) can Enabled!)
-# GZ Image (Uncomment to Enable)
+##############################################
+####### GZ Image (Comment to Disable) ########
 img_gz=Image.gz-dtb
-# Source Path to compiled Image.gz-dtb
+### Source Path to compiled Image.gz-dtb
 io=$k/out/arch/arm64/boot/$img_gz
-# Destination path for compiled Image.gz-dtb
+### Destination path for compiled Image.gz-dtb
 zi=$k/build/$img_gz
-
-### lz4 image (Uncomment to Enable)
+##############################################
+###### LZ4 Image (Uncomment to Enable) #######
 # img_lz4=Image.lz4-dtb
-## Source Path to compiled Image.lz4-dtb
+### Source Path to compiled Image.lz4-dtb
 # io=$k/out/arch/arm64/boot/$img_lz4
-## Destination path for compiled Image.lz4-dtb
+### Destination path for compiled Image.lz4-dtb
 # zi=$k/build/$img_lz4
+##############################################
 
 # DTBToolCM
 dtbtool=$k/build/tools/dtbToolCM
@@ -98,7 +100,7 @@ zm=$k/build/system/lib/modules
 # Destination Path for uploading kernel zip
 zu=$k/upload/
 
-
+##############################################
 # Functions
 ##############################################
 # Function to Pause
@@ -107,7 +109,7 @@ function pause() {
 	[ -z $message ] && message="Press [Enter] key to continue.."
 	read -p "$message" readEnterkey
 }
-
+######################
 # Function to clean up pregenerated images
 function make_bclean {
 		echo
@@ -118,7 +120,7 @@ function make_bclean {
 		rm -rf $zc
 		echo -e "${green}Completed!${restore}"
 }
-
+######################
 # Function to clean generated out folder
 function make_oclean {
 		echo
@@ -126,7 +128,7 @@ function make_oclean {
 		rm -rf "$co"
 		echo -e "${green}Out directory removed!${restore}"
 }
-
+######################
 # Funtion to clean source tree
 function make_sclean {
 		echo
@@ -134,7 +136,7 @@ function make_sclean {
 		make clean && make mrproper
 		echo -e "${green}Cleaning Completed!${restore}"
 }
-
+######################
 # Function to clean up pregenerated images
 function make_fclean {
 		echo
@@ -143,7 +145,7 @@ function make_fclean {
 		make_sclean
 		pause
 }
-
+######################
 # Function to only compile the kernel
 function make_kernel {
 		echo
@@ -160,7 +162,7 @@ function make_kernel {
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
-
+######################
 # Function to recompile the kernel at a slower rate
 # after fixing an error without starting over
 function recompile_kernel {
@@ -170,7 +172,7 @@ function recompile_kernel {
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
-
+######################
 # Function to generate the kernel zip
 function make_zip {
 		echo
@@ -195,7 +197,7 @@ function make_zip {
 		echo -e "${restore}Back at Start"
 		pause
 }
-
+######################
 # Function to generate a dtb image
 function make_dtb {
 		echo
@@ -203,7 +205,7 @@ function make_dtb {
 		$dtbtool -2 -o $zd -s 2048 -p $co/scripts/dtc/ $co/arch/arm64/boot/dts/qcom/
 		echo -e "${green}DTB Generated!${restore}"
 }
-
+######################
 # Generate Changelog
 function make_clog {
 		echo
@@ -225,7 +227,7 @@ function make_clog {
 		sed -i 's/[/]$//' $zc
 		echo -e "${yellow}Changelog Complete!${restore}"
 }
-
+######################
 # Function to build the full kernel zip
 function make_full {
 		echo
@@ -235,6 +237,7 @@ function make_full {
 		make_zip
 }
 
+##############################################
 # Main Menu
 ##############################################
 # Function to display menu
@@ -251,6 +254,7 @@ function make_full {
  		echo "	6. Clean Environment"
   		echo "	7. Exit"
 }
+######################
 # Function to read menu choices
 read_options(){
 	local choice
@@ -263,11 +267,12 @@ read_options(){
 		5) make_full ;;
 		6) make_fclean ;;
 		7) exit 0;;
-		*) echo -e "${red}Error...${restore}" && sleep 2
+		*) echo -e "${red}Error...${restore}" && sleep 1
 	esac
 }
-
+##############################################
 # Main Logic
+##############################################
 while true
 do
 	clear
