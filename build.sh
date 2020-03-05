@@ -94,6 +94,9 @@ zp=$k/build/
 # Destination patch for Changelog
 zc=$k/build/Changelog.txt
 
+# Destination patch for build.log
+zbl=$k/build.log
+
 # Destination Path for compiled modules
 zm=$k/build/system/lib/modules
 
@@ -118,6 +121,7 @@ function make_bclean {
 		rm -rf $zi
 		rm -rf $zj
 		rm -rf $zc
+		rm -rf $zbl
 		echo -e "${green}Completed!${restore}"
 }
 ######################
@@ -149,6 +153,7 @@ function make_fclean {
 # Function to only compile the kernel
 function make_kernel {
 		echo
+		make_bclean
 		make_oclean
 		echo -e "${yellow}Making new out directory"
 		mkdir -p "$co"
@@ -158,7 +163,7 @@ function make_kernel {
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~"
 		echo -e "${yellow}Starting Compile.."
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~${restore}"
-		time make "$o" $ccs $th
+		time make "$o" $ccs $th |& tee -a "$zbl"
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
@@ -168,7 +173,7 @@ function make_kernel {
 function recompile_kernel {
 		echo
 		echo -e "${yellow}Picking up where you left off..${restore}"
-		time make "$o" $ccs $thrc
+		time make "$o" $ccs $thrc |& tee -a "$zbl"
 		echo -e "${green}Compilation Successful!${restore}"
 		pause
 }
@@ -177,7 +182,7 @@ function recompile_kernel {
 function make_zip {
 		echo
 		echo -e "${yellow}Copying kernel to zip directory..${red}"
-		cp "$io" "$zi"
+		cp "$io" "$zi" |& tee -a "$zbl"
 		# Uncomment to enable dtbo
 #		echo -e "${yellow}Copying dtbo to zip directory..${red}"
 #		cp "$j" "$zj"
