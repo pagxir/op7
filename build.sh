@@ -254,8 +254,8 @@ function make_full {
 		echo "	1. Compile Kernel"
 		echo "	2. Recompile Kernel"
 		echo "	3. Generate Kernel Zip"
-		echo "	4. Generate Changelog"
-		echo "	5. Make Full Build"
+		echo "	4. Make Full Build"
+		echo "	5. Generate Stand-Alone Changelog"
  		echo "	6. Clean Environment"
   		echo "	7. Exit"
 }
@@ -268,8 +268,8 @@ read_options(){
 		1) make_kernel ;;
 		2) recompile_kernel ;;
 		3) make_zip ;;
-		4) make_clog ;;
-		5) make_full ;;
+		4) make_full ;;
+		5) make_clog ;;
 		6) make_fclean ;;
 		7) exit 0;;
 		*) echo -e "${red}Error...${restore}" && sleep 1
