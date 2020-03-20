@@ -11,9 +11,9 @@ reset='\e[0m'
 ##############################################
 
 # Kernel zip Name
-kn=SDK_OP7TP_OOS10_RV.7.0.zip
+kn=SDK_OP7TP_OOS10_Kali-RV.7.0.zip
 
-export LOCALVERSION=-SDK_OP7TP_OOS10_RV.7.0
+export LOCALVERSION=-SDK_OOS10_Kali-RV.7.0
 
 # Resource Locations
 ##############################################
