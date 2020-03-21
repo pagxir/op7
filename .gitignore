@@ -131,3 +131,5 @@ build/Image\.gz-dtb
 build/Image-dtb
 
 upload/
+
+build.log
