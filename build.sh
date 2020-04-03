@@ -30,7 +30,7 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
 export CROSS_COMPILE=/android/toolchains/aarch64-9.1/bin/aarch64-linux-gnu-
 # Location Arm32 GCC Toolchain *
-export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
+# export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
 # Export Clang Libary To LD Library Path
 export LD_LIBRARY_PATH=/android/toolchains/gclang/lib64:$LD_LIBRARY_PATH
 
