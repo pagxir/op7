@@ -147,10 +147,10 @@ function make_fclean {
 		make_bclean
 		make_oclean
 		make_sclean
-		pause
+		echo -e "${green}Environment Cleaning Successful!${restore}"
 }
 ######################
-# Function to only compile the kernel
+# Function to only compile the kernel, test builds
 function make_kernel {
 		echo
 		make_bclean
@@ -164,8 +164,13 @@ function make_kernel {
 		echo -e "${yellow}Starting Compile.."
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~${restore}"
 		time make "$o" $ccs $th |& tee -a "$zbl"
-		echo -e "${green}Compilation Successful!${restore}"
-		pause
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Compilation Successful!${restore}"
+			pause
+		else
+			echo -e "${red}Compilation Failed!${restore}"
+			pause
+		fi
 }
 ######################
 # Function to recompile the kernel at a slower rate
@@ -174,8 +179,25 @@ function recompile_kernel {
 		echo
 		echo -e "${yellow}Picking up where you left off..${restore}"
 		time make "$o" $ccs $thrc |& tee -a "$zbl"
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Compilation Successful!${restore}"
+			pause
+		else
+			echo -e "${red}Compilation Failed!${restore}"
+			pause
+		fi
+}
+######################
+# Function for full kernel compile
+function make_fkernel {
+		echo -e "${yellow}Making new out directory${restore}"
+		mkdir -p "$co"
+		echo -e "${green}Created new out directory${restore}"
+		echo -e "${yellow}Establishing build environment..${restore}"
+		make "$o" $ccs $dc
+		echo -e "${yellow}Starting Compile..${restore}"
+		make "$o" $ccs $th |& tee -a "$zbl"
 		echo -e "${green}Compilation Successful!${restore}"
-		pause
 }
 ######################
 # Function to generate the kernel zip
@@ -183,15 +205,13 @@ function make_zip {
 		echo
 		echo -e "${yellow}Copying kernel to zip directory..${red}"
 		cp "$io" "$zi" |& tee -a "$zbl"
-		# Uncomment to enable dtbo
+# Uncomment to enable making dtb
+#		make_dtb
+# Uncomment to enable copying dtbo
 #		echo -e "${yellow}Copying dtbo to zip directory..${red}"
 #		cp "$j" "$zj"
-		# Uncomment to enable dtb
-#		echo
-#		make_dtb
 		echo -e "${green}Copy Successful${restore}"
 		make_clog
-		echo
 		echo -e "${yellow}Making zip file....${red}"
 		cd "$zp"
 		zip -r "$kn" *
@@ -205,7 +225,6 @@ function make_zip {
 ######################
 # Function to generate a dtb image
 function make_dtb {
-		echo
 		echo -e "${yellow}Generating DTB Image"
 		$dtbtool -2 -o $zd -s 2048 -p $co/scripts/dtc/ $co/arch/arm64/boot/dts/qcom/
 		echo -e "${green}DTB Generated!${restore}"
@@ -236,9 +255,8 @@ function make_clog {
 # Function to build the full kernel zip
 function make_full {
 		echo
-		make_bclean
-		make_sclean
-		make_kernel
+		make_fclean
+		make_fkernel
 		make_zip
 }
 
