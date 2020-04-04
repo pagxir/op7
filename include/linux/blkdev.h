@@ -678,7 +678,7 @@ struct request_queue {
 #define QUEUE_FLAG_MQ_DEFAULT	((0 << QUEUE_FLAG_IO_STAT) |		\
 				 (1 << QUEUE_FLAG_STACKABLE)	|	\
 				 (1 << QUEUE_FLAG_SAME_COMP)	|	\
-				 (1 << QUEUE_FLAG_POLL))
+				 (0 << QUEUE_FLAG_POLL))
 
 /*
  * @q->queue_lock is set while a queue is being initialized. Since we know
