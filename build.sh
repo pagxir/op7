@@ -70,6 +70,13 @@ zi=$k/build/$img_gz
 ### Destination path for compiled Image.lz4-dtb
 # zi=$k/build/$img_lz4
 ##############################################
+## Uncompressed Image (Uncomment to Enable) ##
+# img_uc=Image-dtb
+### Source Path to compiled Image-dtb
+# io=$k/out/arch/arm64/boot/$img_uc
+### Destination path for compiled Image-dtb
+# zi=$k/build/$img_uc
+##############################################
 
 # DTBToolCM
 dtbtool=$k/build/tools/dtbToolCM
