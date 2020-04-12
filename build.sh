@@ -31,7 +31,7 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 export CROSS_COMPILE=/android/toolchains/aarch64-9.1/bin/aarch64-linux-gnu-
 # Location Arm32 GCC Toolchain *
 # export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
-# Export Clang Libary To LD Library Path
+# Location of Clang Libary to LD Library Path
 export LD_LIBRARY_PATH=/android/toolchains/gclang/lib64:$LD_LIBRARY_PATH
 
 ##############################################
@@ -204,7 +204,12 @@ function make_fkernel {
 		make "$o" $ccs $dc
 		echo -e "${yellow}Starting Compile..${restore}"
 		make "$o" $ccs $th |& tee -a "$zbl"
-		echo -e "${green}Compilation Successful!${restore}"
+		if [ $? -eq 0 ]; then
+			echo -e "${green}Compilation Successful!${restore}"
+		else
+			echo -e "${red}Compilation Failed!${restore}"
+			pause
+		fi
 }
 ######################
 # Function to generate the kernel zip
@@ -222,8 +227,15 @@ function make_zip {
 		echo -e "${yellow}Making zip file....${red}"
 		cd "$zp"
 		zip -r "$kn" *
-		echo -e "${yellow}Moving zip to upload directory"
-		mv "$kn" "$zu" 
+		if [ -d "$zu" ]; then
+			echo -e "${yellow}Moving zip to upload directory"
+			mv "$kn" "$zu" 
+		else
+			echo -e "${yellow}Creating upload directory"
+			mkdir -p "$zu"
+			echo -e "${yellow}Moving zip to upload directory"
+			mv "$kn" "$zu" 
+		fi
 		echo -e "${green}Completed build script!${restore}"
 		cd $k
 		echo -e "${restore}Back at Start"
@@ -232,9 +244,13 @@ function make_zip {
 ######################
 # Function to generate a dtb image
 function make_dtb {
+	if [ -f "$dtbtool" ]; then
 		echo -e "${yellow}Generating DTB Image"
 		$dtbtool -2 -o $zd -s 2048 -p $co/scripts/dtc/ $co/arch/arm64/boot/dts/qcom/
 		echo -e "${green}DTB Generated!${restore}"
+	else
+		echo -e "${yellow}No DTB Tool Available!${restore}"
+	fi
 }
 ######################
 # Generate Changelog
