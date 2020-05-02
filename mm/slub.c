@@ -2418,7 +2418,7 @@ static inline int node_match(struct page *page, int node)
 }
 
 #if defined(CONFIG_SLUB_DEBUG) || defined(CONFIG_SLAB_STAT_DEBUG)
-static int count_free(struct page *page)
+inline int count_free(struct page *page)
 {
 	return page->objects - page->inuse;
 }
