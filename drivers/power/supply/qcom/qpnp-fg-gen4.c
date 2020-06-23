@@ -668,6 +668,10 @@ static int fg_gen4_get_learned_capacity(void *data, int64_t *learned_cap_uah)
 		*learned_cap_uah = act_cap_mah * 1000;
 
 	fg_dbg(fg, FG_CAP_LEARN, "learned_cap_uah:%lld\n", *learned_cap_uah);
+
+	if(*learned_cap_uah < 4000000)
+		*learned_cap_uah = 4000000;
+
 	return 0;
 }
 
@@ -2331,6 +2335,9 @@ static void profile_load_work(struct work_struct *work)
 			NOM_CAP_OFFSET, rc);
 	} else {
 		nom_cap_uah = (buf[0] | buf[1] << 8) * 1000;
+		if(nom_cap_uah < 4000000)
+			nom_cap_uah = 4000000;
+
 		rc = fg_gen4_store_learned_capacity(chip, nom_cap_uah);
 		if (rc < 0)
 			pr_err("Error in writing to ACT_BATT_CAP rc=%d\n", rc);
