@@ -183,7 +183,7 @@ config BRIDGE_NETFILTER
 	depends on BRIDGE
 	depends on NETFILTER && INET
 	depends on NETFILTER_ADVANCED
-	default m
+	default y
 	---help---
 	  Enabling this option will let arptables resp. iptables see bridged
 	  ARP resp. IP traffic. If you want a bridging firewall, you probably
@@ -194,13 +194,13 @@ config BRIDGE_NETFILTER
 	  If unsure, say N.
 
 config SLA
-	default n
+	default y
 	bool "to monitor netlink traffic"
 	help
 	  Realtime netlink traffic monitor.
 
 config SLA_ALGO
-	default n
+	default y
 	bool "OnePlus SLA algorithm"
 
 source "net/netfilter/Kconfig"
