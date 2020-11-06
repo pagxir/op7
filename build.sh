@@ -12,9 +12,9 @@ reset='\e[0m'
 ##############################################
 
 # Kernel zip Name
-kn=SDK_OP7TP_OOS10_RV.10.1.zip
+kn=SDK_OP7TP_OOS10_RV.11.0.zip
 
-export LOCALVERSION=-SDK_OP7TP_OOS10_RV.10.1
+export LOCALVERSION=-SDK_OP7TP_OOS10_RV.11.0
 
 # Resource Locations
 ##############################################
