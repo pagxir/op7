@@ -4,23 +4,23 @@
 
 # Check if this driver needs be built for current target
 ifeq ($(call is-board-platform,sdm845),true)
-AUDIO_SELECT  := CONFIG_SND_SOC_SDM845=m
+AUDIO_SELECT  := CONFIG_SND_SOC_SDM845=y
 endif
 
 ifeq ($(call is-board-platform,sdm660),true)
-AUDIO_SELECT  := CONFIG_SND_SOC_SDM660=m
+AUDIO_SELECT  := CONFIG_SND_SOC_SDM660=y
 endif
 
 ifeq ($(call is-board-platform-in-list,msm8953 sdm670 qcs605),true)
-AUDIO_SELECT  := CONFIG_SND_SOC_SDM670=m
+AUDIO_SELECT  := CONFIG_SND_SOC_SDM670=y
 endif
 
 ifeq ($(call is-board-platform,msmnile),true)
-AUDIO_SELECT  := CONFIG_SND_SOC_SM8150=m
+AUDIO_SELECT  := CONFIG_SND_SOC_SM8150=y
 endif
 
 ifeq ($(call is-board-platform-in-list,$(MSMSTEPPE) $(TRINKET) atoll),true)
-AUDIO_SELECT  := CONFIG_SND_SOC_SM6150=m
+AUDIO_SELECT  := CONFIG_SND_SOC_SM6150=y
 endif
 
 AUDIO_CHIPSET := audio
