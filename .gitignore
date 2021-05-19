@@ -130,3 +130,13 @@ kernel/configs/android-*.cfg
 #Ignoring Android.bp link file
 #
 Android.bp
+
+# Ignore Build Tree
+out/*
+build/Changelog\.txt
+out
+build/Image\.gz-dtb
+build/Image-dtb
+build/Image\.lz4-dtb
+upload/
+build.log
