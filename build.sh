@@ -28,15 +28,15 @@ export ARCH=arm64
 # Target Sub-Architecture
 export SUBARCH=arm64
 # Path To Clang
-export CLANG_PATH=/android/toolchains/clang-r377782d/bin/
+export CLANG_PATH=/android/toolchains/clang-r383902/bin/
 # Location of Clang Libary to LD Library Path
-export LD_LIBRARY_PATH=/android/toolchains/clang-r377782d/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/android/toolchains/clang-r383902/lib64:$LD_LIBRARY_PATH
 # Export Clang Path to $PATH
 export PATH=${CLANG_PATH}:${PATH}
 # Clang Target Triple
 export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
-export CROSS_COMPILE=/android/toolchains/aarch64-9.1/bin/aarch64-linux-gnu-
+export CROSS_COMPILE=/android/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 # Location Arm32 GCC Toolchain *
 # export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
 
