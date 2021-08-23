@@ -1,22 +1,22 @@
-obj-$(CONFIG_OPCHAIN) += uxcore/
+obj-$(CONFIG_OPCHAIN) += uxcore/core/
 CORE_PATH = $(KBUILD_SRC)/coretech/uxcore/core
 ifeq ($(CORE_PATH),$(wildcard $(CORE_PATH)))
 obj-$(CONFIG_OPCHAIN) += uxcore/core/
 endif
 
-obj-$(CONFIG_MEMPLUS) += memplus/
+obj-$(CONFIG_MEMPLUS) += memplus/core/
 CORE_PATH = $(KBUILD_SRC)/coretech/memplus/core
 ifeq ($(CORE_PATH),$(wildcard $(CORE_PATH)))
 obj-$(CONFIG_MEMPLUS) += memplus/core/
 endif
 
-obj-$(CONFIG_SMART_BOOST) += smartboost/
+obj-$(CONFIG_SMART_BOOST) += smartboost/core/
 CORE_PATH = $(KBUILD_SRC)/coretech/smartboost/core
 ifeq ($(CORE_PATH),$(wildcard $(CORE_PATH)))
 obj-$(CONFIG_SMART_BOOST) += smartboost/core/
 endif
 
-obj-$(CONFIG_DEFRAG) += defrag/
+obj-$(CONFIG_DEFRAG) += defrag/core/
 CORE_PATH = $(KBUILD_SRC)/coretech/defrag/core
 ifeq ($(CORE_PATH),$(wildcard $(CORE_PATH)))
 obj-$(CONFIG_DEFRAG) += defrag/core/
