@@ -25,7 +25,6 @@ export kd=$k/guacamole
 
 # Target Architecture
 export ARCH=arm64
-
 # Target Sub-Architecture
 export SUBARCH=arm64
 
@@ -42,9 +41,9 @@ export PATH=${CLANG_PATH}:${PATH}
 export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
 
-export CROSS_COMPILE=$k/prebuilts/aarch64/bin/aarch64-linux-android-
+export CROSS_COMPILE=$k/prebuilts/arm64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 # Location Arm32 GCC Toolchain *
- export CROSS_COMPILE_ARM32=$k/prebuilts/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
+ export CROSS_COMPILE_ARM32=$k/prebuilts/arm/arm-linux-androideabi-4.9/bin/arm-cortex_a15-linux-gnueabihf-
 
 # CPU threads
 # All Available cores (Used for normal compilation)
