@@ -10,51 +10,48 @@ reset='\e[0m'
 # SkyDragon Kernel Build Script
 # Version 2.0
 ##############################################
-# Map current directory
-KERNEL_DIR=`pwd`
-
-# Source Path to kernel tree
-k="/android/kernels/7pro11"
-
+# User Variables
+export LOCALVERSION="-SDK_OP7TP_OOS11_RV.1.0"
 # Kernel zip Name
-kn=SDK_OP7TP_OOS11_RV.1.0.zip
+export kn="SDK_OP7TP_OOS11_RV.1.0.zip"
+# Kernel Defconfig
+export dc=SD_defconfig
 
-export LOCALVERSION=-SDK_OP7TP_OOS11_RV.1.0
-
-# Resource Locations
+### System Variables ###
 ##############################################
+# Map current directory
+export k=$(pwd)
+export kd=$k/guacamole
+
 # Target Architecture
 export ARCH=arm64
+
 # Target Sub-Architecture
 export SUBARCH=arm64
+
+# Compiler Type
+export CC=clang
+export ccs="CC=clang"
 # Path To Clang
-export CLANG_PATH=/android/toolchains/clang/bin/
+export CLANG_PATH=$k/prebuilts/clang/clang-r383902/bin/
 # Location of Clang Libary to LD Library Path
-export LD_LIBRARY_PATH=/android/toolchains/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$k/prebuilts/clang/clang-r383902/lib64:$LD_LIBRARY_PATH
 # Export Clang Path to $PATH
 export PATH=${CLANG_PATH}:${PATH}
 # Clang Target Triple
 export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
-export CROSS_COMPILE=/android/toolchains/aarch64/bin/aarch64-linux-android-
+
+export CROSS_COMPILE=$k/prebuilts/aarch64/bin/aarch64-linux-android-
 # Location Arm32 GCC Toolchain *
-# export CROSS_COMPILE_ARM32=/android/toolchains/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
-
-##############################################
-# Paths
-##############################################
-
-#Compiler Type
-ccs="CC=clang"
+ export CROSS_COMPILE_ARM32=$k/prebuilts/arm-cortex_a15-linux-gnueabihf/bin/arm-cortex_a15-linux-gnueabihf-
 
 # CPU threads
 # All Available cores (Used for normal compilation)
-th="-j$(grep -c ^processor /proc/cpuinfo)"
+export th="-j$(grep -c ^processor /proc/cpuinfo)"
 # 12 Cores Only: Recompile (Only used for 'recompiles' to catch errors more easily)
-thrc="-j12"
+export thrc="-j12"
 
-# Path to source defconfig used to build
-dc=SD_defconfig
 
 # Image Type (Only ONE of the following (lz4/gz) can Enabled!)
 ##############################################
@@ -63,34 +60,34 @@ img_gz=Image.gz-dtb
 ### Source Path to compiled Image.gz-dtb
 io=$k/out/arch/arm64/boot/$img_gz
 ### Destination path for compiled Image.gz-dtb
-zi=$k/build/$img_gz
+zi=$kd/build/$img_gz
 ##############################################
 ###### LZ4 Image (Uncomment to Enable) #######
 # img_lz4=Image.lz4-dtb
 ### Source Path to compiled Image.lz4-dtb
 # io=$k/out/arch/arm64/boot/$img_lz4
 ### Destination path for compiled Image.lz4-dtb
-# zi=$k/build/$img_lz4
+# zi=$kd/build/$img_lz4
 ##############################################
 ## Uncompressed Image (Uncomment to Enable) ##
 # img_uc=Image-dtb
 ### Source Path to compiled Image-dtb
 # io=$k/out/arch/arm64/boot/$img_uc
 ### Destination path for compiled Image-dtb
-# zi=$k/build/$img_uc
+# zi=$kd/build/$img_uc
 ##############################################
 
 # DTBToolCM
-dtbtool=$k/build/tools/dtbToolCM
+dtbtool=$kd/build/tools/dtbToolCM
 # Destination path for compiled dtb image
-zd=$k/build/dtb
+zd=$kd/build/dtb
 
 # DTBO Image
 dtbo=dtbo.img
 # Source Path to compiled dtbo image
 j=$k/out/arch/arm64/boot/$dtbo
 # Destination path for compiled dtbo image
-zj=$k/build/$dtbo
+zj=$kd/build/$dtbo
 
 # Compile Path to out 
 o="O=$k/out"
@@ -98,16 +95,16 @@ o="O=$k/out"
 co=$k/out
 
 # Source path for building kernel zip
-zp=$k/build/
+zp=$kd/build/
 
 # Destination patch for Changelog
-zc=$k/build/Changelog.txt
+zc=$kd/build/Changelog.txt
 
-# Destination patch for build.log
+# Destination path for build.log
 zbl=$k/build.log
 
 # Destination Path for compiled modules
-zm=$k/build/system/lib/modules
+zm=$kd/build/system/lib/modules
 
 # Destination Path for uploading kernel zip
 zu=$k/upload/
@@ -155,9 +152,12 @@ function make_oclean {
 # Funtion to clean source tree
 function make_sclean {
 		echo
+		echo -e "Entering kernel directory.."
+		cd $kd
 		echo -e "${yellow}Cleaning source directory..${red}"
 #		make clean && make mrproper
 		echo -e "${green}Cleaning Completed!${restore}"
+		cd $k
 }
 ######################
 # Function to clean up pregenerated images
@@ -176,7 +176,8 @@ function make_kernel {
 		make_oclean
 		echo -e "${yellow}Making new out directory"
 		mkdir -p "$co"
-		echo -e "${green}Created new out directory"
+		echo -e "Entering kernel directory.."
+		cd $kd
 		echo -e "${yellow}Establishing build environment..${restore}"
 		make "$o" $ccs $dc
 		echo -e "${yellow}~~~~~~~~~~~~~~~~~~"
@@ -211,15 +212,18 @@ function recompile_kernel {
 function make_fkernel {
 		echo -e "${yellow}Making new out directory${restore}"
 		mkdir -p "$co"
-		echo -e "${green}Created new out directory${restore}"
+		echo -e "Entering kernel directory.."
+		cd $kd
 		echo -e "${yellow}Establishing build environment..${restore}"
 		make "$o" $ccs $dc
 		echo -e "${yellow}Starting Compile..${restore}"
 		make "$o" $ccs $th |& tee -a "$zbl"
 		if [ $? -eq 0 ]; then
 			echo -e "${green}Compilation Successful!${restore}"
+			cd $k
 		else
 			echo -e "${red}Compilation Failed!${restore}"
+			cd $k
 			pause
 		fi
 }
@@ -306,6 +310,8 @@ function make_dtb {
 # Generate Changelog
 function make_clog {
 		echo
+		echo -e "Entering kernel directory.."
+		cd $kd
 		echo -e "${yellow}Generating Changelog.."
 		rm -rf $zc
 		touch $zc
@@ -323,6 +329,7 @@ function make_clog {
 		sed -i 's/project/ */g' $zc
 		sed -i 's/[/]$//' $zc
 		echo -e "${yellow}Changelog Complete!${restore}"
+		cd $k
 }
 ######################
 # Function to build the full kernel zip
