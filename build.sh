@@ -22,12 +22,12 @@ export dc=SD_defconfig
 # Map current directory
 export k=$(pwd)
 export kd=$k/guacamole
-
+######################
 # Target Architecture
 export ARCH=arm64
 # Target Sub-Architecture
 export SUBARCH=arm64
-
+######################
 # Compiler Type
 export CC=clang
 export ccs="CC=clang"
@@ -40,18 +40,41 @@ export PATH=${CLANG_PATH}:${PATH}
 # Clang Target Triple
 export CLANG_TRIPLE=aarch64-linux-gnu-
 # Location of Aarch64 GCC Toolchain *
-
+######################
 export CROSS_COMPILE=$k/prebuilts/arm64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 # Location Arm32 GCC Toolchain *
  export CROSS_COMPILE_ARM32=$k/prebuilts/arm/arm-linux-androideabi-4.9/bin/arm-cortex_a15-linux-gnueabihf-
-
+######################
 # CPU threads
 # All Available cores (Used for normal compilation)
 export th="-j$(grep -c ^processor /proc/cpuinfo)"
 # 12 Cores Only: Recompile (Only used for 'recompiles' to catch errors more easily)
 export thrc="-j12"
+######################
+# Compile Path to out 
+o="O=$k/out/guacamole"
+# Source Path to clean(empty) out folder
+co=$k/out/guacamole
+######################
+# Destination Path for uploading kernel zip
+zu=$k/upload/
+# Destination path for build.log
+zbl=$k/build-op711.log
+######################
+# Source path for building kernel zip
+zp=$k/ak3/
+# Destination patch for Changelog
+zc=$zp/Changelog.txt
+# Number of days to log in changelog
+zcdt=180
+# Destination Path for compiled modules
+zm=$zp/system/lib/modules
+# DTBToolCM
+dtbtool=$zp/tools/dtbToolCM
+# Destination path for compiled dtb image
+zd=$zp/dtb
 
-
+##############################################
 # Image Type (Only ONE of the following (lz4/gz) can Enabled!)
 ##############################################
 ####### GZ Image (Comment to Disable) ########
@@ -59,54 +82,32 @@ img_gz=Image.gz-dtb
 ### Source Path to compiled Image.gz-dtb
 io=$k/out/arch/arm64/boot/$img_gz
 ### Destination path for compiled Image.gz-dtb
-zi=$kd/build/$img_gz
+zi=$zp/$img_gz
 ##############################################
+
 ###### LZ4 Image (Uncomment to Enable) #######
 # img_lz4=Image.lz4-dtb
 ### Source Path to compiled Image.lz4-dtb
 # io=$k/out/arch/arm64/boot/$img_lz4
 ### Destination path for compiled Image.lz4-dtb
-# zi=$kd/build/$img_lz4
+# zi=$zp/$img_lz4
 ##############################################
+
 ## Uncompressed Image (Uncomment to Enable) ##
 # img_uc=Image-dtb
 ### Source Path to compiled Image-dtb
 # io=$k/out/arch/arm64/boot/$img_uc
 ### Destination path for compiled Image-dtb
-# zi=$kd/build/$img_uc
+# zi=$zp/$img_uc
 ##############################################
 
-# DTBToolCM
-dtbtool=$kd/build/tools/dtbToolCM
-# Destination path for compiled dtb image
-zd=$kd/build/dtb
-
+##############################################
 # DTBO Image
 dtbo=dtbo.img
 # Source Path to compiled dtbo image
 j=$k/out/arch/arm64/boot/$dtbo
 # Destination path for compiled dtbo image
-zj=$kd/build/$dtbo
-
-# Compile Path to out 
-o="O=$k/out"
-# Source Path to clean(empty) out folder
-co=$k/out
-
-# Source path for building kernel zip
-zp=$kd/build/
-
-# Destination patch for Changelog
-zc=$kd/build/Changelog.txt
-
-# Destination path for build.log
-zbl=$k/build.log
-
-# Destination Path for compiled modules
-zm=$kd/build/system/lib/modules
-
-# Destination Path for uploading kernel zip
-zu=$k/upload/
+zj=$zp/$dtbo
 
 ##############################################
 # Functions
@@ -314,7 +315,7 @@ function make_clog {
 		echo -e "${yellow}Generating Changelog.."
 		rm -rf $zc
 		touch $zc
-	for i in $(seq 180);
+	for i in $(seq $zcdt);
 	do
 		local After_Date=`date --date="$i days ago" +%F`
 		local kcl=$(expr $i - 1)
