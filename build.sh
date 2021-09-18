@@ -80,7 +80,7 @@ zd=$zp/dtb
 ####### GZ Image (Comment to Disable) ########
 img_gz=Image.gz-dtb
 ### Source Path to compiled Image.gz-dtb
-io=$k/out/arch/arm64/boot/$img_gz
+io=$co/arch/arm64/boot/$img_gz
 ### Destination path for compiled Image.gz-dtb
 zi=$zp/$img_gz
 ##############################################
@@ -88,7 +88,7 @@ zi=$zp/$img_gz
 ###### LZ4 Image (Uncomment to Enable) #######
 # img_lz4=Image.lz4-dtb
 ### Source Path to compiled Image.lz4-dtb
-# io=$k/out/arch/arm64/boot/$img_lz4
+# io=$$co/arch/arm64/boot/$img_lz4
 ### Destination path for compiled Image.lz4-dtb
 # zi=$zp/$img_lz4
 ##############################################
@@ -96,7 +96,7 @@ zi=$zp/$img_gz
 ## Uncompressed Image (Uncomment to Enable) ##
 # img_uc=Image-dtb
 ### Source Path to compiled Image-dtb
-# io=$k/out/arch/arm64/boot/$img_uc
+# io=$$co/arch/arm64/boot/$img_uc
 ### Destination path for compiled Image-dtb
 # zi=$zp/$img_uc
 ##############################################
@@ -105,7 +105,7 @@ zi=$zp/$img_gz
 # DTBO Image
 dtbo=dtbo.img
 # Source Path to compiled dtbo image
-j=$k/out/arch/arm64/boot/$dtbo
+j=$co/arch/arm64/boot/$dtbo
 # Destination path for compiled dtbo image
 zj=$zp/$dtbo
 
