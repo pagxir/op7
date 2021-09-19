@@ -11,9 +11,9 @@ reset='\e[0m'
 # Version 2.0
 ##############################################
 # User Variables
-export LOCALVERSION="-SDK_OP7TP_OOS11_RV.1.0"
+export LOCALVERSION="-SDK_OP7TP_OOS11_RV.2.0"
 # Kernel zip Name
-export kn="SDK_OP7TP_OOS11_RV.1.0.zip"
+export kn="SDK_OP7TP_OOS11_RV.2.0.zip"
 # Kernel Defconfig
 export dc=SD_defconfig
 
