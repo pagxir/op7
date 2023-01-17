@@ -174,7 +174,7 @@ LINUX_INC +=	-Iinclude/linux
 INCS +=		$(COMMON_INC) \
 		$(UAPI_INC)
 
-EXTRA_CFLAGS += $(INCS)
+EXTRA_CFLAGS += $(INCS) -Wno-error=format-extra-args -Wno-error=format -Wno-error=all -Wno-error
 
 CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \
 		-DANI_LITTLE_BIT_ENDIAN \

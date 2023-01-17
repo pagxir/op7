@@ -13,8 +13,13 @@
 #include <linux/version.h>
 
 #define MOTOR_TAG                  "[oneplus_motor] "
+#if 0
 #define MOTOR_ERR(fmt, args...)    printk(KERN_ERR MOTOR_TAG" %s : "fmt,__FUNCTION__,##args)
 #define MOTOR_LOG(fmt, args...)    printk(KERN_INFO MOTOR_TAG" %s : "fmt,__FUNCTION__,##args)
+#else
+#define MOTOR_ERR(fmt, args...)
+#define MOTOR_LOG(fmt, args...)
+#endif
 
 //camera state event to report
 #define MOTOR_EVENT_TYPE			EV_KEY

@@ -87,7 +87,7 @@ LINUX_INC +=	-Iinclude/linux
 INCS +=		$(COMMON_INC) \
 		$(UAPI_INC)
 
-EXTRA_CFLAGS += $(INCS)
+EXTRA_CFLAGS += $(INCS) -Wno-error=misleading-indentation
 
 
 CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \

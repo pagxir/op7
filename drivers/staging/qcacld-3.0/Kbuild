@@ -2151,6 +2151,8 @@ ifdef WLAN_HDD_ADAPTER_MAGIC
 ccflags-y += -DWLAN_HDD_ADAPTER_MAGIC=$(WLAN_HDD_ADAPTER_MAGIC)
 endif
 
+ccflags-y += -Wno-error=overflow -Wno-error=maybe-uninitialized -Wno-error=misleading-indentation
+
 # Determine if we are building against an arm architecture host
 ifeq ($(findstring arm, $(ARCH)),)
 	ccflags-y += -DWLAN_HOST_ARCH_ARM=0
